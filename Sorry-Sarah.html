@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>I'm Sorry ❤️</title>
+<style>
+    /* Beautiful aesthetic background with pastel gradient and subtle light spots */
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        min-height: 100vh;
+        text-align: center;
+        overflow: hidden;
+        position: relative;
+        margin: 0;
+        padding: 0;
+        color: #333;
+    }
+
+    /* Animated 2D background canvas styling */
+    #background-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    /* Soft glowing light spots */
+    body::before,
+    body::after {
+        content: "";
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(120px);
+        opacity: 0.4;
+        pointer-events: none;
+        z-index: 0;
+    }
+    body::before {
+        width: 400px;
+        height: 400px;
+        background: #ff9a9e;
+        top: 10%;
+        left: 15%;
+    }
+    body::after {
+        width: 500px;
+        height: 500px;
+        background: #fad0c4;
+        bottom: 5%;
+        right: 10%;
+    }
+
+    h1 {
+        font-size: 2rem;
+        color: #222;
+        animation: fadeIn 2s ease-in-out;
+        z-index: 10;
+        position: relative;
+    }
+
+    .click-box {
+        margin-top: 40px;
+        padding: 15px 25px;
+        background: #ff7575;
+        color: white;
+        font-size: 1.2rem;
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        transition: box-shadow 0.3s ease, background-color 0.3s ease;
+        z-index: 10;
+        position: relative;
+        user-select: none;
+        outline: none;
+    }
+
+    .click-box:hover {
+        background: #ff4040;
+        box-shadow: 0 8px 25px rgba(255, 64, 64, 0.7);
+    }
+
+    .click-box:active {
+        box-shadow: 0 3px 10px rgba(255, 64, 64, 0.9) inset;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .message-box {
+        background: white;
+        padding: 20px 25px;
+        max-width: 520px;
+        border-radius: 15px;
+        margin-top: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        animation: fadeIn 1s;
+        z-index: 10;
+        position: relative;
+        min-height: 140px; /* for typing effect space */
+        font-size: 1.1rem;
+        line-height: 1.5rem;
+        white-space: pre-wrap;
+        text-align: left;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .heart {
+        font-size: 5rem;
+        animation: heartbeat 1.2s infinite;
+        color: red;
+        z-index: 10;
+        position: relative;
+        filter: drop-shadow(0 0 6px #ff4040);
+        animation-timing-function: ease-in-out;
+    }
+
+    @keyframes heartbeat {
+        0% { transform: scale(1); filter: drop-shadow(0 0 6px #ff4040); }
+        25% { transform: scale(1.3); filter: drop-shadow(0 0 14px #ff6a6a); }
+        50% { transform: scale(1); filter: drop-shadow(0 0 6px #ff4040); }
+        75% { transform: scale(1.3); filter: drop-shadow(0 0 14px #ff6a6a); }
+        100% { transform: scale(1); filter: drop-shadow(0 0 6px #ff4040); }
+    }
+
+    @keyframes fadeIn {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+
+    /* Falling hearts container */
+    #falling-hearts {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .falling-heart {
+        position: absolute;
+        color: #ff4d6d;
+        font-size: 24px;
+        user-select: none;
+        animation-name: fall, sway;
+        animation-timing-function: linear, ease-in-out;
+        animation-iteration-count: infinite, infinite;
+    }
+
+    /* Fall animation: move down */
+    @keyframes fall {
+        0% {
+            transform: translateY(-40px);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(110vh);
+            opacity: 0;
+        }
+    }
+
+    /* Sway animation left-right */
+    @keyframes sway {
+        0%, 100% { transform: translateX(0); }
+        50% { transform: translateX(20px); }
+    }
+
+    /* Confetti Styles */
+    .confetti-piece {
+        position: fixed;
+        width: 12px;
+        height: 12px;
+        background-color: red;
+        opacity: 0.85;
+        z-index: 15;
+        pointer-events: none;
+        will-change: transform, opacity;
+        border-radius: 3px;
+        animation-timing-function: ease-out;
+    }
+
+    /* Please pop-up with adjusted positioning */
+    #please-pop {
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        font-size: 6rem;
+        font-weight: bold;
+        color: #ff4040;
+        text-shadow: 0 0 10px #ff7070;
+        z-index: 20;
+        pointer-events: none;
+        user-select: none;
+        animation: popInOut 2s forwards;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    @keyframes popInOut {
+        0% {
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+        }
+        50% {
+            transform: translate(-50%, -50%) scale(1.4);
+            opacity: 1;
+        }
+        100% {
+            transform: translate(-50%, -50%) scale(1.1);
+            opacity: 0;
+        }
+    }
+
+    /* Footer YouTube music link styling */
+    #youtube-music-link {
+        margin-top: 20px;
+        background: #ff4040;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+        box-shadow: 0 5px 15px rgba(255, 64, 64, 0.7);
+        z-index: 10;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+    #youtube-music-link:hover {
+        background: #ff6161;
+    }
+</style>
+</head>
+<body>
+
+<!-- Animated 2D background canvas -->
+<canvas id="background-animation"></canvas>
+
+<h1>💌 I have something to say...</h1>
+
+<div id="step1" class="click-box" onclick="showStep(2)">Click to open</div>
+
+<div id="step2" class="hidden">
+    <div class="message-box" id="typing-text"></div>
+    <div class="click-box" id="next-btn" style="display:none;" onclick="showStep(3)">Next</div>
+</div>
+
+<div id="step3" class="hidden"> 
+    <div class="message-box" id="typing-letter"></div>
+    <!-- YouTube music link added here -->
+    <a id="youtube-music-link" href="https://youtu.be/RcIAmKz1SZs?si=Xn8j05Bi_M3qcRpa" target="_blank" rel="noopener noreferrer" aria-label="Play Sorry by Justin Bieber on YouTube">
+      🎵 Listen to "Sorry" by Justin Bieber
+    </a>
+    <div class="click-box" id="start-convo-btn" style="display:none;" onclick="startFinalStep()">Can we start our conversation again? 💬</div>
+</div>
+
+<div id="step4" class="hidden">
+    <div class="heart" id="final-heart">❤️</div>
+    <p style="font-size: 1.5rem; margin-top: 20px;">
+      Please <a href="https://www.instagram.com/itz_unknownguy__?igsh=MWU1aGNqNHF0ajFmaQ==" target="_blank" rel="noopener noreferrer" style="color: #ff4040; text-decoration: none; font-weight: bold;">
+      message me on Instagram 📩</a>
+    </p>
+</div>
+
+<!-- Please pop-up -->
+<div id="please-pop" class="hidden">Please</div>
+
+<!-- Falling Hearts Container -->
+<div id="falling-hearts"></div>
+
+<script>
+// Canvas 2D animated background
+const canvas = document.getElementById('background-animation');
+const ctx = canvas.getContext('2d');
+let width, height;
+let circles = [];
+
+function random(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function Circle() {
+    this.x = random(0, width);
+    this.y = random(0, height);
+    this.radius = random(10, 40);
+    this.opacity = random(0.1, 0.3);
+    this.color = `rgba(255, 255, 255, ${this.opacity})`;
+    this.speed = random(0.1, 0.3);
+    this.direction = Math.random() > 0.5 ? 1 : -1;
+}
+
+Circle.prototype.draw = function() {
+    ctx.beginPath();
+    const gradient = ctx.createRadialGradient(this.x, this.y, this.radius*0.1, this.x, this.y, this.radius);
+    gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity})`);
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = gradient;
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    ctx.fill();
+}
+
+Circle.prototype.update = function() {
+    this.x += this.speed * this.direction;
+    if(this.x - this.radius > width) this.x = -this.radius;
+    if(this.x + this.radius < 0) this.x = width + this.radius;
+}
+
+function init() {
+    resizeCanvas();
+    circles = [];
+    for(let i=0; i < 30; i++) {
+        circles.push(new Circle());
+    }
+    animate();
+}
+
+function resizeCanvas() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+}
+
+function animate() {
+    ctx.clearRect(0, 0, width, height);
+    for(let circle of circles) {
+        circle.update();
+        circle.draw();
+    }
+    requestAnimationFrame(animate);
+}
+
+window.addEventListener('resize', () => {
+    resizeCanvas();
+});
+
+// Start background animation
+init();
+
+// Steps control
+function showStep(step) {
+    document.querySelectorAll('#step1, #step2, #step3, #step4').forEach(el => el.classList.add('hidden'));
+    document.getElementById('step' + step).classList.remove('hidden');
+    if (step === 2) {
+        startTypingIntro();
+    }
+    if (step === 3) {
+        startTypingLetter();
+    }
+}
+
+// Text contents for typing animations
+const introText = `Hey... I know I messed up 😔\n\nWhen you cracked that joke,  \nI didn't get it and I may have made you feel unheard.\n\nI never want to make you feel that way again ❤️`;
+
+const apologyLetter = `I’m truly sorry for not understanding your joke and making you feel upset.  \nYou mean a lot to me, and your laugh is one of my favorite sounds in the world.  \nI want to be someone who always listens, understands, and laughs with you.  \nPlease forgive me for this small mistake and let’s make countless happy memories again.  \nYou are special to me, more than words can say ❤️`;
+
+// Typing intro text
+function startTypingIntro() {
+    const container = document.getElementById('typing-text');
+    const nextBtn = document.getElementById('next-btn');
+    container.textContent = '';
+    nextBtn.style.display = 'none';
+    let i = 0;
+
+    function type() {
+        if (i < introText.length) {
+            container.textContent += introText.charAt(i);
+            i++;
+            setTimeout(type, 45);
+        } else {
+            nextBtn.style.display = 'inline-block';
+        }
+    }
+    type();
+}
+
+// Typing apology letter with "Please" pop after typing finishes
+function startTypingLetter() {
+    const container = document.getElementById('typing-letter');
+    const startBtn = document.getElementById('start-convo-btn');
+    const pleasePop = document.getElementById('please-pop');
+    container.textContent = '';
+    startBtn.style.display = 'none';
+    pleasePop.classList.add('hidden');
+
+    let i = 0;
+
+    function type() {
+        if (i < apologyLetter.length) {
+            container.textContent += apologyLetter.charAt(i);
+            i++;
+            setTimeout(type, 35);
+        } else {
+            // Show "Please" pop-up briefly, positioned higher to avoid overlap
+            pleasePop.classList.remove('hidden');
+            setTimeout(() => {
+                pleasePop.classList.add('hidden');
+                startBtn.style.display = 'inline-block';
+            }, 2000);
+        }
+    }
+    type();
+}
+
+// Confetti animation on final step
+function startFinalStep() {
+    showStep(4);
+    launchConfetti();
+}
+
+function launchConfetti() {
+    const confettiCount = 80;
+    const colors = ['#ff4d6d','#ff7a88','#ffa1a8','#ff4040','#ff6978'];
+    const confettiContainer = document.createDocumentFragment();
+
+    function randomRange(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    for(let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti-piece');
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.left = randomRange(0, window.innerWidth) + 'px';
+        confetti.style.top = randomRange(-20, window.innerHeight / 2) + 'px';
+        confetti.style.width = randomRange(8, 14) + 'px';
+        confetti.style.height = confetti.style.width;
+        confetti.style.opacity = Math.random() * 0.9 + 0.6;
+        confetti.style.transform = `rotate(${randomRange(0, 360)}deg)`;
+        confetti.style.animation = `confetti-fall ${randomRange(3,6)}s linear forwards, confetti-spin ${randomRange(2,4)}s linear infinite`;
+        confettiContainer.appendChild(confetti);
+    }
+    document.body.appendChild(confettiContainer);
+
+    setTimeout(() => {
+        const confettis = document.querySelectorAll('.confetti-piece');
+        confettis.forEach(c => c.remove());
+    }, 6000);
+}
+
+// Confetti animations keyframes dynamically added
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = `
+@keyframes confetti-fall {
+    0% {opacity: 1; transform: translateY(0) rotate(0deg);}
+    100% {opacity: 0; transform: translateY(600px) rotate(360deg);}
+}
+@keyframes confetti-spin {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+}
+`;
+document.head.appendChild(styleSheet);
+
+// Falling hearts animation
+const heartContainer = document.getElementById('falling-hearts');
+const heartColors = ['#ff4d6d', '#ff7a88', '#ffa1a8', '#ff4d6d'];
+const heartSizes = [16, 20, 24, 28];
+const maxHearts = 20;
+
+function createHeart() {
+    const heart = document.createElement('div');
+    heart.innerHTML = '❤️';
+    heart.classList.add('falling-heart');
+    const size = heartSizes[Math.floor(Math.random() * heartSizes.length)];
+    heart.style.fontSize = size + 'px';
+    heart.style.color = heartColors[Math.floor(Math.random() * heartColors.length)];
+    heart.style.left = Math.random() * 100 + 'vw';
+    const fallDuration = 5000 + Math.random() * 5000;
+    heart.style.animationDuration = fallDuration + 'ms, ' + (2000 + Math.random() * 3000) + 'ms';
+    heart.style.animationDelay = '0ms, 0ms';
+    heartContainer.appendChild(heart);
+    setTimeout(() => {
+        heart.remove();
+    }, fallDuration);
+}
+
+setInterval(() => {
+    if (heartContainer.children.length < maxHearts) {
+        createHeart();
+    }
+}, 400);
+
+</script>
+
+</body>
+</html>
